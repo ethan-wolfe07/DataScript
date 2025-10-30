@@ -1,0 +1,16 @@
+export declare const helperModuleLoaded = true;
+
+export func double(n: number) {
+  return n + n;
+}
+
+export func greet(name: string) {
+  return "Hello, " + name;
+}
+
+export default {
+  description: "helpers bundle",
+  double,
+  greet,
+  helperModuleLoaded,
+};

@@ -1,0 +1,27 @@
+// === Collection Helpers & Cloning Showcase ===
+
+declare profile = {
+  name: "Object",
+  age: 27,
+  tags: ["admin", "beta", "tester"],
+};
+
+declare numbers = [1, 3, 6, 12, 4, 8];
+
+declare phrase = "data";
+
+print("keys(profile) =", keys(profile));
+print("values(profile) =", values(profile));
+print("entries(profile.tags) =", entries(profile.tags));
+print("len(profile.tags) =", len(profile.tags));
+print("len(profile) =", len(profile));
+print("len('data') =", len(phrase));
+
+declare profileClone = clone(profile);
+declare profileDeepClone = deepClone(profile);
+print("clone(profile) == profile?", profileClone == profile);
+print("deepClone(profile) == profile?", profileDeepClone == profile);
+print("values(clone(profile)) =", values(profileClone));
+print("values(deepClone(profile)) =", values(profileDeepClone));
+
+print("entries(numbers) =", entries(numbers));

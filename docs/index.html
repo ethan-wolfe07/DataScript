@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Datascript Language Handbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-theme="dark">
+  <header class="hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="hero__top">
+      <a href="#essentials" class="hero__logo" aria-label="Datascript home">
+        Datascript Docs
+      </a>
+      <button class="theme-toggle" type="button" aria-live="polite">
+        <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
+        <span class="theme-toggle__text">Dark</span>
+      </button>
+    </div>
+    <div class="hero__content">
+      <div>
+        <p class="eyebrow">Datascript Handbook · October 2025</p>
+        <h1>Build faster with Datascript</h1>
+        <p class="lead">
+          A concise guide to the Datascript language - from first variables to
+          Mongo-powered workflows. Use the sidebar to jump to the topics you
+          need while keeping everything fresh with the latest DSL additions.
+        </p>
+        <div class="hero__actions">
+          <a href="#essentials" class="btn">Start Learning</a>
+          <a href="#mongo" class="btn btn--outline">Mongo DSL Overview</a>
+        </div>
+      </div>
+      <div class="hero__card">
+        <pre><code>// Quick taste
+using mongo from uri database "sample" {
+  use collection users;
+  declare const marker = time();
+  users <- { marker, createdAt: time() };
+  print("Inserted", marker);
+}
+</code></pre>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+  <nav class="sidebar" data-scrollspy="true">
+      <h2>Contents</h2>
+      <ul>
+        <li><a href="#essentials">Language Essentials</a></li>
+        <li><a href="#types">Data Types</a></li>
+        <li><a href="#control-flow">Control Flow</a></li>
+        <li><a href="#functions">Functions</a></li>
+        <li><a href="#objects">Objects &amp; Arrays</a></li>
+        <li><a href="#classes-schemas">Classes &amp; Schemas</a></li>
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#async">Async &amp; Promises</a></li>
+        <li><a href="#errors">Error Handling</a></li>
+        <li><a href="#mongo">Mongo DSL</a></li>
+        <li><a href="#cli">CLI &amp; Tooling</a></li>
+        <li><a href="#reference">Reference</a></li>
+      </ul>
+    </nav>
+
+    <main class="content">
+      <section id="essentials" class="card">
+        <h2>Language Essentials</h2>
+        <p>
+          Datascript is a typed scripting language designed for data workflows.
+          Variables are declared with <code>declare</code>; constants use
+          <code>declare const</code>. Assignments require an initializer for
+          constants.
+        </p>
+        <pre><code>declare count = 0;
+declare const greeting = "hello";
+count = count + 1;
+</code></pre>
+        <p>
+          Comments use <code>//</code>. Statements end with semicolons, except
+          block constructs like <code>if</code>, <code>while</code>, and
+          <code>func</code> bodies.
+        </p>
+      </section>
+
+      <section id="types" class="card">
+        <h2>Data Types</h2>
+        <p>Primitive and structural types are supported:</p>
+        <ul>
+          <li><strong>Number</strong> &mdash; double precision (<code>42</code>)</li>
+          <li><strong>String</strong> &mdash; double quoted (<code>"text"</code>)</li>
+          <li><strong>Boolean</strong> &mdash; <code>true</code> or <code>false</code></li>
+          <li><strong>Null</strong> &mdash; <code>null</code></li>
+          <li><strong>Array</strong> &mdash; <code>[1, 2, 3]</code></li>
+          <li><strong>Object</strong> &mdash; <code>{ key: value }</code></li>
+        </ul>
+        <pre><code>declare profile = {
+  name: "Ada",
+  skills: ["analysis", "automation"],
+  active: true,
+};
+</code></pre>
+      </section>
+
+      <section id="control-flow" class="card">
+        <h2>Control Flow</h2>
+        <p>
+          Datascript provides the familiar branching and looping constructs plus
+          <code>try/catch</code> for exception handling.
+        </p>
+        <pre><code>if (count &gt; 10) {
+  print("large");
+} else if (count == 10) {
+  print("equal");
+} else {
+  print("small");
+}
+
+while (count &lt; 5) {
+  count = count + 1;
+}
+
+try {
+  riskyTask();
+} catch (error) {
+  print("Recovering:", error);
+}
+</code></pre>
+      </section>
+
+      <section id="functions" class="card">
+        <h2>Functions</h2>
+        <p>
+          Functions are defined with <code>func</code>. Parameters can include
+          default values and optional type annotations.
+        </p>
+        <pre><code>func formatUser(name: string, email: string = "n/a") {
+  return name + " <" + email + ">";
+}
+
+print(formatUser("Ada", "ada@example.com"));
+</code></pre>
+        <p>
+          Anonymous functions can be assigned to variables, and native
+          <code>await</code> is available inside async-aware contexts.
+        </p>
+      </section>
+
+      <section id="objects" class="card">
+        <h2>Objects &amp; Arrays</h2>
+        <p>
+          Object literals support shorthand and string keys. Arrays provide the
+          standard iteration and indexing capabilities. Utilities like
+          <code>entries()</code>, <code>keys()</code>, <code>values()</code>,
+          and <code>len()</code> are available as native functions.
+        </p>
+        <pre><code>declare metrics = [1, 3, 5];
+declare index = 0;
+while (index &lt; len(metrics)) {
+  print(metrics[index]);
+  index = index + 1;
+}
+
+declare config = {
+  "x-api-key": "demo",
+  retries: 3,
+};
+</code></pre>
+      </section>
+
+      <section id="classes-schemas" class="card">
+        <h2>Classes &amp; Schemas</h2>
+        <p>
+          Schemas extend the language with lightweight data models. Declare
+          required and optional fields, provide defaults, and even add methods.
+          Instances automatically gain a <code>save()</code> helper for
+          inspection or persistence hooks.
+        </p>
+        <pre><code>schema User create(username: string, email: string) {
+  required username: string;
+  required email: string;
+  optional roles: array = ["user"];
+
+  describe() {
+    print(username, roles);
+  }
+}
+
+declare admin = User({ username: "admin", email: "admin@example.com" });
+admin.describe();
+admin.save();
+</code></pre>
+        <p>
+          For heavier logic, use <code>class</code> declarations (similar
+          syntax) to define behaviors without schema semantics.
+        </p>
+      </section>
+
+      <section id="modules" class="card">
+        <h2>Modules</h2>
+        <p>
+          Organize code with <code>import</code> and <code>export</code>. Modules
+          support namespace, named, and default exports.
+        </p>
+        <pre><code>// math.ds
+export declare answer = 42;
+export func double(x) { return x * 2; }
+
+// consumer.ds
+import "./math.ds" exposing { double };
+print(double(21));
+</code></pre>
+        <p>
+          The runtime caches modules, ensuring imports are evaluated once per
+          execution.
+        </p>
+      </section>
+
+      <section id="async" class="card">
+        <h2>Async &amp; Promises</h2>
+        <p>
+          Use <code>await</code> to resolve promises. Native helpers like
+          <code>sleep(ms)</code> return promises for timing and scheduling.
+        </p>
+        <pre><code>func pingService(url: string) {
+  declare response = await fetch(url);
+  return await response.json();
+}
+
+await sleep(500);
+</code></pre>
+      </section>
+
+      <section id="errors" class="card">
+        <h2>Error Handling</h2>
+        <p>
+          Throw values of any type. Catch blocks can optionally bind the error
+          to an identifier.
+        </p>
+        <pre><code>func ensurePositive(value: number) {
+  if (value &lt;= 0) {
+    throw "Value must be positive.";
+  }
+  return value;
+}
+
+try {
+  ensurePositive(-5);
+} catch (error) {
+  print("Validation failed:", error);
+}
+</code></pre>
+      </section>
+
+      <section id="mongo" class="card card--accent">
+        <h2>Mongo DSL</h2>
+        <p>
+          The Mongo DSL adds ergonomic syntax for connections, collection
+          defaults, CRUD operators, query pipelines, and session scopes.
+        </p>
+        <h3>Scoped Connections</h3>
+        <pre><code>using mongo from mongoUri database "analytics" as db with {
+  collections: {
+    users: {
+      projection: { email: 1, createdAt: 1 },
+      sort: { createdAt: -1 },
+      limit: 25,
+    },
+  },
+} {
+  use collection users;
+  users <- { email: "demo@example.com" };
+}
+</code></pre>
+        <h3>Operators &amp; Queries</h3>
+        <ul>
+          <li><code>&lt;-</code> insert</li>
+          <li><code>?</code> find one, <code>??</code> find many</li>
+          <li><code>!</code> delete one, <code>!!</code> delete many</li>
+          <li><code>|&gt;</code> aggregate pipeline</li>
+          <li><code>update where ... set ...</code> updates</li>
+        </ul>
+        <pre><code>declare marker = "demo-" + toString(time());
+users <- {
+  email: marker + "@example.com",
+  createdAt: time(),
+};
+
+declare fetched = (users ? query { email == marker + "@example.com" }).value;
+users update where query { email == fetched.email } set {
+  "$set": { lastSeenAt: time() },
+};
+</code></pre>
+        <h3>Aggregation Helpers</h3>
+        <pre><code>declare summary = (activity_logs |> [
+  match(eq("email", marker + "@example.com")),
+  sort({ at: -1 }),
+  limit(5),
+  project({ email: 1, at: 1 }),
+]).value;
+</code></pre>
+        <h3>Schemas in Mongo Workflows</h3>
+        <pre><code>schema DemoUser create(name: string, email: string) {
+  required name: string;
+  required email: string;
+  optional tier: string = "free";
+}
+
+declare userDoc = DemoUser({
+  name: "Schema Example",
+  email: "schema@example.com",
+  tier: "gold",
+});
+
+users <- {
+  email: userDoc.email,
+  name: userDoc.name,
+  tier: userDoc.tier,
+  createdAt: time(),
+};
+</code></pre>
+      </section>
+
+      <section id="cli" class="card">
+        <h2>CLI &amp; Tooling</h2>
+        <p>
+          Run Datascript files via <code>deno run main.ts path/to/script.ds</code>.
+          Helpful native utilities:
+        </p>
+        <ul>
+          <li><code>print()</code>, <code>debug()</code>, <code>info()</code> &mdash; logging</li>
+          <li><code>assert(condition, message)</code> &mdash; runtime checks</li>
+          <li><code>time()</code>, <code>sleep(ms)</code>, <code>schedule()</code> &mdash; timing</li>
+          <li><code>clone()</code>, <code>deepClone()</code> &mdash; data helpers</li>
+          <li><code>env(key)</code> &mdash; environment variables</li>
+        </ul>
+        <p>
+          For linting and type checks, run <code>deno lint</code> and
+          <code>deno check</code> at the repository root.
+        </p>
+      </section>
+
+      <section id="reference" class="card card--highlight">
+        <h2>Reference &amp; Files</h2>
+        <div class="grid">
+          <div>
+            <h3>Frontend</h3>
+            <ul>
+              <li><code>frontend/lexer.ts</code> &mdash; tokenization</li>
+              <li><code>frontend/parser.ts</code> &mdash; AST builder</li>
+              <li><code>frontend/ast.ts</code> &mdash; node definitions</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Runtime</h3>
+            <ul>
+              <li><code>runtime/interpreter.ts</code> &mdash; dispatch</li>
+              <li><code>runtime/eval/expressions.ts</code></li>
+              <li><code>runtime/eval/statements.ts</code></li>
+              <li><code>runtime/mongo.ts</code> &amp; <code>mongoState.ts</code></li>
+              <li><code>runtime/functions.ts</code> &mdash; native APIs</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Samples</h3>
+            <ul>
+              <li><code>scripts/mongo_test.ds</code></li>
+              <li><code>scripts/schemas.ds</code></li>
+              <li><code>scripts/diagnostics.ds</code></li>
+              <li><code>scripts/all.ds</code></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>Crafted with <span>green</span> energy - Datascript Docs - 2025</p>
+    <a href="#" class="back-to-top">Back to top ↑</a>
+  </footer>
+  <script>
+    (function () {
+      const STORAGE_KEY = "datascript-theme";
+      const body = document.body;
+      const toggle = document.querySelector(".theme-toggle");
+      if (!toggle) return;
+
+      const icon = toggle.querySelector(".theme-toggle__icon");
+      const text = toggle.querySelector(".theme-toggle__text");
+
+      const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)");
+
+      const readStoredTheme = () => {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          return stored === "light" || stored === "dark" ? stored : null;
+        } catch (_error) {
+          return null;
+        }
+      };
+
+      const writeStoredTheme = (value) => {
+        try {
+          localStorage.setItem(STORAGE_KEY, value);
+        } catch (_error) {
+          /* ignore storage errors */
+        }
+      };
+
+      const resolveInitialTheme = () => {
+        const stored = readStoredTheme();
+        if (stored) return stored;
+        return prefersLight && prefersLight.matches ? "light" : "dark";
+      };
+
+      const updateToggleState = (theme) => {
+        const nextTheme = theme === "dark" ? "light" : "dark";
+        toggle.dataset.theme = theme;
+        toggle.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
+        toggle.setAttribute("title", `Switch to ${nextTheme.charAt(0).toUpperCase()}${nextTheme.slice(1)} theme`);
+        if (icon) icon.textContent = theme === "dark" ? "🌙" : "☀️";
+        if (text) text.textContent = theme === "dark" ? "Dark" : "Light";
+      };
+
+      const applyTheme = (theme, persist = true) => {
+        body.dataset.theme = theme;
+        updateToggleState(theme);
+        if (persist) {
+          writeStoredTheme(theme);
+        }
+      };
+
+      let activeTheme = resolveInitialTheme();
+      applyTheme(activeTheme, false);
+
+      toggle.addEventListener("click", () => {
+        activeTheme = activeTheme === "dark" ? "light" : "dark";
+        applyTheme(activeTheme);
+      });
+
+      if (prefersLight && prefersLight.addEventListener) {
+        prefersLight.addEventListener("change", (event) => {
+          if (readStoredTheme()) return;
+          activeTheme = event.matches ? "light" : "dark";
+          applyTheme(activeTheme, false);
+        });
+      }
+    })();
+
+    (function () {
+      const sidebar = document.querySelector(".sidebar ul");
+      const links = sidebar ? Array.from(sidebar.querySelectorAll("a[href^='#']")) : [];
+      if (!links.length || !("IntersectionObserver" in window)) {
+        return;
+      }
+
+      const sections = links
+        .map((link) => {
+          const targetId = link.getAttribute("href");
+          if (!targetId) return null;
+          try {
+            return document.querySelector(targetId);
+          } catch (_error) {
+            return null;
+          }
+        })
+        .filter((section) => section !== null);
+
+      if (!sections.length) {
+        return;
+      }
+
+      const setActiveLink = (id) => {
+        links.forEach((link) => {
+          const matches = link.getAttribute("href") === `#${id}`;
+          link.classList.toggle("is-active", matches);
+        });
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveLink(entry.target.id);
+            }
+          });
+        },
+        {
+          rootMargin: "0px 0px -70% 0px",
+        }
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    })();
+  </script>
+</body>
+</html>

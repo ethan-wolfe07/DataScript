@@ -1,0 +1,118 @@
+// Mongo integration showcase using the new DSL surface.
+// Provide credentials through environment variables before running:
+//   DATASCRIPT_MONGO_URI - MongoDB connection string (required)
+//   DATASCRIPT_MONGO_DB  - Logical database name (optional, defaults to "test")
+
+declare mongoUri = env("DATASCRIPT_MONGO_URI");
+
+if (mongoUri == null) {
+    print("Skipping mongo_test.ds: set DATASCRIPT_MONGO_URI to enable this showcase.");
+} else {
+    declare mongoDbName = env("DATASCRIPT_MONGO_DB");
+
+    if (mongoDbName == null) {
+        mongoDbName = "test";
+        print("DATASCRIPT_MONGO_DB not set; defaulting to 'test'.");
+    }
+
+    using mongo from mongoUri database mongoDbName as db with {
+        collections: {
+            users: {
+                projection: { email: 1, createdAt: 1, source: 1 },
+                sort: { createdAt: -1 },
+                limit: 25,
+            },
+            activity_logs: {
+                sort: { at: -1 },
+            },
+        },
+    } {
+        use collection users with {
+            projection: { email: 1, createdAt: 1, source: 1 },
+            sort: { createdAt: -1 },
+            limit: 25,
+        };
+        use collection activity_logs;
+
+        declare const email = "datascript-demo-" + toString(time()) + "@example.com";
+
+        schema DemoUser create(name: string, email: string, tier: string) {
+            required name: string;
+            required email: string;
+            optional tier: string = "free";
+            optional createdAt: number = time();
+            optional active: boolean = true;
+        }
+
+        declare const schemaEmail = "datascript-schema-" + toString(time()) + "@example.com";
+        declare demoUser = DemoUser({
+            name: "Schema Example",
+            email: schemaEmail,
+            tier: "gold",
+            createdAt: time(),
+            active: false,
+        });
+
+        // Insert a marker document.
+        users <- {
+            email,
+            createdAt: time(),
+            source: "mongo_test.ds",
+        };
+
+        print("Inserted marker email:", email);
+
+        // Fetch the marker using the query shorthand.
+        declare lookup = users ? query { email == email };
+        declare fetched = lookup.value;
+        print("Fetched marker:", inspect(fetched));
+
+        users <- {
+            email: demoUser.email,
+            name: demoUser.name,
+            tier: demoUser.tier,
+            active: demoUser.active,
+            createdAt: demoUser.createdAt,
+            source: "mongo_test.ds schema",
+        };
+
+        declare schemaLookup = users ? query { email == schemaEmail };
+        declare schemaRecord = schemaLookup.value;
+        print("Inserted schema-backed user:", inspect(schemaRecord));
+
+        // Record an activity entry referencing the marker.
+        activity_logs <- {
+            email,
+            action: "demo-run",
+            at: time(),
+        };
+
+        // Demonstrate the find-many shorthand.
+        declare actionsResult = activity_logs ?? query { email == email };
+        declare actions = actionsResult.value;
+        print("Recorded", len(actions), "activity entries for marker.");
+
+        // Apply an update using the new update DSL.
+        users update where query { email == email } set {
+            "$set": {
+                source: "mongo_test.ds (updated)",
+                touchedAt: time(),
+            },
+        };
+
+        // Run an aggregation pipeline constructed from native helpers.
+        declare pipelineResult = activity_logs |> [
+            match(eq("email", email)),
+            count("runs"),
+        ];
+        declare summary = pipelineResult.value;
+        print("Aggregate summary:", inspect(summary));
+
+        // Clean up demo data so reruns stay tidy.
+        activity_logs !! query { email == email };
+        users ! query { email == email };
+        users ! query { email == schemaEmail };
+
+        print("Cleanup complete.");
+    }
+}

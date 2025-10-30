@@ -1,0 +1,10 @@
+// === Modules Showcase ===
+import "../modules/helpers.ds" as helpers exposing { double, greet, helperModuleLoaded } default helpersBundle;
+import "../modules/helpers.ds" default helpersBundleAgain;
+
+print("Helpers exported flag:", helperModuleLoaded);
+print("Double 21:", double(21));
+print("Greet via named import:", greet("Module"));
+print("Default bundle description:", helpersBundle.description);
+print("Default bundle greet:", helpersBundle.greet("Default"));
+print("Cached import reused bundle:", helpersBundle == helpersBundleAgain);

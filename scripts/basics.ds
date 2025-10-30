@@ -1,0 +1,86 @@
+// === Language Basics Showcase ===
+
+declare x = 45;
+declare const y = 55;
+declare z;
+
+print("Sum:", x + y);
+print("Timestamp:", time());
+
+func add(x: number, y = 10) {
+  print("add result:", x + y);
+}
+
+add(5);
+add(5, 2);
+
+func classify(age: number) {
+  if (age >= 65) {
+    return "senior";
+  }
+  if (age >= 18) {
+    return "adult";
+  }
+  return "minor";
+}
+
+func firstAbove(limit: number, items) {
+  declare index = 0;
+  while (index < items.length) {
+    if (items[index] > limit) {
+      return items[index];
+    }
+    index = index + 1;
+  }
+  return null;
+}
+
+print("Equality:", 5 == 5, 5 != 4);
+print("Relational:", 3 < 10, 3 >= 5);
+print("Logical:", true && false, true || false, !false);
+
+declare profile = {
+  name: "Object",
+  age: 27,
+  active: true,
+  address: {
+    street: "123 Main St",
+    city: "Somewhere",
+  },
+  tags: ["admin", "beta", "tester"],
+};
+
+print("Profile basics:", profile.name, profile.age, profile.active);
+print("City:", profile.address.city);
+print("Primary tag:", profile.tags[0]);
+print("Classification:", classify(profile.age));
+
+declare numbers = [1, 3, 6, 12, 4, 8];
+print("First above 10:", firstAbove(10, numbers));
+
+declare scan = 0;
+declare loopSum = 0;
+declare currentValue;
+while (scan < numbers.length) {
+  currentValue = numbers[scan];
+
+  if (currentValue == 3) {
+    scan = scan + 1;
+    continue;
+  }
+
+  if (currentValue > 10) {
+    break;
+  }
+
+  loopSum = loopSum + currentValue;
+  scan = scan + 1;
+}
+
+print("Loop sum:", loopSum);
+
+if (profile.active && profile.age >= 18) {
+  print("Profile is an active adult.");
+} else {
+  print("Profile requires activation or is underage.");
+}

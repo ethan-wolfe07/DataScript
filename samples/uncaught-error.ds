@@ -1,0 +1,3 @@
+// Minimal program to demonstrate uncaught exception bubbling to the host.
+print("Running uncaught exception sample...");
+throw "expected uncaught value";

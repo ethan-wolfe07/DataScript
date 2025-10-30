@@ -1,0 +1,17 @@
+// === Asynchronous Scheduling Showcase ===
+
+func logLater() {
+  print("logLater executed after delay");
+}
+
+func greetLater(name: string) {
+  print("Hello from schedule:", name);
+}
+
+print("schedule(25, logLater) =", schedule(25, logLater));
+print("schedule(50, greetLater, ['DataScript']) =", schedule(50, greetLater, ["DataScript"]));
+print("schedule(10, print, ['native call']) =", schedule(10, print, ["native call"]));
+
+print("await sleep(15) demo starting...");
+await sleep(15);
+print("...resumed after sleep");

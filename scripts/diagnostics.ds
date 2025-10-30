@@ -1,0 +1,30 @@
+// === Diagnostics Showcase ===
+
+schema Sample create(id: number, label: string) {
+  required id: number;
+  required label: string;
+  optional notes: string = "";
+
+  describe() {
+    print("Sample:", id, label, notes);
+  }
+}
+
+declare sample = Sample({ id: 1, label: "diagnostic" });
+sample.describe();
+
+print("typeOf Sample schema:", typeOf(Sample));
+print("typeOf sample instance:", typeOf(sample));
+
+declare inspectedSample = inspect(sample);
+print("inspect returned same instance?", inspectedSample == sample);
+
+inspect({ tag: "diagnostics", payload: sample });
+
+assert(typeOf(sample) == "Sample");
+
+try {
+  assert(typeOf(sample) == "Other", "sample is not an Other instance");
+} catch (err) {
+  print("Captured assertion:", err);
+}

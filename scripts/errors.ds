@@ -1,0 +1,27 @@
+// === Error Handling Showcase ===
+
+func throwMessage(payload) {
+  throw payload;
+}
+
+print("Try/catch with parameter:");
+try {
+  throwMessage("function payload");
+  print("This line is not expected to run.");
+} catch (err) {
+  print("Caught from throwMessage:", err);
+}
+
+print("Direct throw with anonymous catch:");
+try {
+  throw 99;
+} catch {
+  print("Caught without parameter.");
+}
+
+print("Set 'triggerUncaught' to true to see uncaught behaviour.");
+declare triggerUncaught = false;
+if (triggerUncaught) {
+  print("Triggering uncaught exception now...");
+  throw { message: "uncaught demo" };
+}

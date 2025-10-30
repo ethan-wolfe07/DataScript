@@ -1,0 +1,15 @@
+// === DataScript Full Showcase ===
+print("Running all showcase scripts...");
+
+import "./modules.ds";
+import "./basics.ds";
+import "./diagnostics.ds";
+import "./math_strings.ds";
+import "./collections.ds";
+import "./schemas.ds";
+import "./system.ds";
+import "./async.ds";
+import "./errors.ds";
+import "./mongo_test.ds";
+
+print("All showcases complete.");

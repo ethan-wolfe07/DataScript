@@ -1,0 +1,26 @@
+// === Math & String Utilities Showcase ===
+
+print("abs(-42) =", abs(-42));
+print("sqrt(144) =", sqrt(144));
+print("pow(3, 4) =", pow(3, 4));
+print("max(3, 9, 1) =", max(3, 9, 1));
+print("min(3, 9, 1) =", min(3, 9, 1));
+print("clamp(25, 0, 10) =", clamp(25, 0, 10));
+print("round(6.49) =", round(6.49));
+print("floor(6.99) =", floor(6.99));
+print("ceil(6.01) =", ceil(6.01));
+
+declare phrase = "  Mongo queries are easier  ";
+print("strlen(phrase) =", strlen(phrase));
+print("uppercase =", uppercase(phrase));
+print("lowercase =", lowercase(phrase));
+print("contains 'queries' =", contains(phrase, "queries"));
+print("trim =", trim(phrase));
+
+declare words = split(trim(phrase), " ");
+print("split result length =", words.length);
+print("words entries =", entries(words));
+
+print("toNumber('42') =", toNumber("42"));
+print("toNumber(true) =", toNumber(true));
+print("toString(99) =", toString(99));

@@ -1,0 +1,41 @@
+// === Schema Composition Showcase ===
+
+schema User create(username: string, email: string) {
+  required username: string;
+  required email: string;
+  optional id: number = 0;
+  optional roles: array = ["user"];
+  optional active: boolean = true;
+
+  describe() {
+    print("User:", username, "<" + email + ">", "roles:", roles);
+  }
+}
+
+declare user = User({ username: "cole", email: "cole@example.com", active: false });
+user.describe();
+user.save();
+
+schema BaseRecord create(id: number) {
+  required id: number;
+  optional createdAt: number = time();
+
+  describe() {
+    print("BaseRecord:", id, "created", createdAt);
+  }
+}
+
+schema AuditRecord extends BaseRecord {
+  optional updatedAt: number = time();
+
+  describe() {
+    print("AuditRecord:", id, "created", createdAt, "updated", updatedAt);
+  }
+}
+
+declare audit = AuditRecord({ id: 101 });
+audit.describe();
+audit.save();
+
+print("schemaInfo(User) =", schemaInfo(User));
+print("schemaInfo(audit) =", schemaInfo(audit));

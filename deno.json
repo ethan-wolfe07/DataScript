@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "run": "deno run -A main.ts"
+  },
+  "imports": {
+    "@std/path": "https://deno.land/std@0.224.0/path/mod.ts",
+    "@mongo": "https://deno.land/x/mongo@v0.33.0/mod.ts"
+  }
+}

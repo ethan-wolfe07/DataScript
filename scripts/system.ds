@@ -1,0 +1,4 @@
+// === System Utilities Showcase ===
+
+print("uuid() =", uuid());
+print("env('DATASCRIPT_TEST', 'fallback') =", env("DATASCRIPT_TEST", "fallback"));
