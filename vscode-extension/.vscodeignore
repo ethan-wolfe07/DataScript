@@ -1,0 +1,9 @@
+**/*.ts
+**/*.ts.map
+**/*.test.ts
+.vscode/**
+.git/**
+node_modules/**
+.vscode-test/**
+tsconfig.json
+README.md

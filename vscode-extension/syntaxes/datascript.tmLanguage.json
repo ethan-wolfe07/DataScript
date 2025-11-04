@@ -1,0 +1,173 @@
+{
+  "scopeName": "source.datascript",
+  "name": "Datascript",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#declarations" },
+    { "include": "#builtins" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.datascript",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.datascript",
+          "begin": "\/\\*",
+          "end": "\\*\/",
+          "patterns": [
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.datascript",
+          "begin": "\"",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.datascript" } },
+          "end": "\"",
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.datascript" } },
+          "patterns": [
+            { "name": "constant.character.escape.datascript", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "string.quoted.single.datascript",
+          "begin": "'",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.datascript" } },
+          "end": "'",
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.datascript" } },
+          "patterns": [
+            { "name": "constant.character.escape.datascript", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "string.quoted.template.datascript",
+          "begin": "`",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.datascript" } },
+          "end": "`",
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.datascript" } },
+          "patterns": [
+            {
+              "name": "constant.character.escape.datascript",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.datascript",
+          "match": "-?(0|[1-9]\\d*)(\\.\\d+)?([eE][+-]?\\d+)?"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.datascript",
+          "match": "\\b(if|else|while|for|return|break|continue|try|catch|throw|await|async)\\b"
+        },
+        {
+          "name": "keyword.declaration.datascript",
+          "match": "\\b(declare|const|func|schema|class|import|export|using|from|module|namespace|with|as|exposing)\\b"
+        },
+        {
+          "name": "storage.type.datascript",
+          "match": "\\b(number|string|boolean|array|object|null|any)\\b"
+        },
+        {
+          "name": "constant.language.boolean.datascript",
+          "match": "\\b(true|false|null)\\b"
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "name": "meta.function.datascript",
+          "begin": "(\\bfunc\\b)(?=\\s+[A-Za-z_][\\w]*)",
+          "beginCaptures": {
+            "1": { "name": "keyword.declaration.function.datascript" }
+          },
+          "end": "(?=\\{)",
+          "patterns": [
+            {
+              "name": "entity.name.function.datascript",
+              "match": "(?<=\\bfunc\\s+)[A-Za-z_][\\w]*"
+            }
+          ]
+        },
+        {
+          "name": "meta.schema.datascript",
+          "begin": "(\\bschema\\b)(?=\\s+[A-Za-z_][\\w]*)",
+          "beginCaptures": {
+            "1": { "name": "keyword.declaration.type.datascript" }
+          },
+          "end": "(?=\\{)",
+          "patterns": [
+            {
+              "name": "entity.name.type.datascript",
+              "match": "(?<=\\bschema\\s+)[A-Za-z_][\\w]*"
+            },
+            {
+              "name": "keyword.other.create.datascript",
+              "match": "\\bcreate\\b"
+            }
+          ]
+        },
+        {
+          "name": "meta.class.datascript",
+          "begin": "(\\bclass\\b)(?=\\s+[A-Za-z_][\\w]*)",
+          "beginCaptures": {
+            "1": { "name": "keyword.declaration.type.datascript" }
+          },
+          "end": "(?=\\{)",
+          "patterns": [
+            {
+              "name": "entity.name.type.class.datascript",
+              "match": "(?<=\\bclass\\s+)[A-Za-z_][\\w]*"
+            }
+          ]
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "name": "support.function.builtin.datascript",
+          "match": "\\b(print|debug|info|assert|len|keys|values|entries|clone|deepClone|time|sleep|schedule|fetch)\\b"
+        },
+        {
+          "name": "support.type.mongo.datascript",
+          "match": "\\b(match|sort|limit|project|group|pipeline)\\b",
+          "captures": {
+            "0": { "name": "support.function.mongo.datascript" }
+          }
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.assignment.datascript",
+          "match": "<-|<-?|=|\\+=|-=|\\*=|/=|%=|!|!!|\\?\\?|\\?"
+        },
+        {
+          "name": "keyword.operator.pipeline.datascript",
+          "match": "\\|>"
+        }
+      ]
+    }
+  }
+}

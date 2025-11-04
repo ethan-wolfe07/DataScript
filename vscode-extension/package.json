@@ -1,0 +1,84 @@
+{
+  "name": "datascript-language-support",
+  "displayName": "Datascript Language Support",
+  "description": "VS Code extension providing tooling for the Datascript language.",
+  "version": "0.0.1",
+  "publisher": "ethan-wolfe07",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ethan-wolfe07/datascript"
+  },
+  "bugs": {
+    "url": "https://github.com/ethan-wolfe07/datascript/issues"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "datascript",
+        "aliases": ["Datascript", "datascript"],
+        "extensions": [".ds"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "datascript.formatDocument",
+        "title": "Datascript: Format Document"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "datascript",
+        "scopeName": "source.datascript",
+        "path": "./syntaxes/datascript.tmLanguage.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "datascript.formatDocument",
+        "key": "ctrl+alt+f",
+        "when": "editorLangId == datascript"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "Datascript",
+        "properties": {
+          "datascript.format.indentSize": {
+            "type": "integer",
+            "default": 2,
+            "minimum": 1,
+            "maximum": 8,
+            "description": "Number of spaces to indent blocks when formatting Datascript files."
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "clean": "rimraf dist",
+    "vscode:prepublish": "npm run build",
+    "lint": "npm run build",
+  "package": "npm run build && npx @vscode/vsce package",
+    "test": "echo 'Test suite not implemented yet'"
+  },
+  "devDependencies": {
+    "@types/node": "^18.17.0",
+    "@types/vscode": "^1.75.0",
+    "rimraf": "^5.0.5",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
+    "@vscode/vsce": "^3.6.2",
+    "@vscode/test-electron": "^2.3.3"
+  }
+}
