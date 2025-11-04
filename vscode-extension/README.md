@@ -17,10 +17,10 @@ npm install
 npm run watch
 ```
 
-In another terminal launch VS Code in extension development mode:
+In another terminal launch VS Code in extension development mode, pointing to the extension folder:
 
 ```powershell
-code --extensionDevelopmentPath "C:\Users\ewolf\OneDrive\Desktop\Programs\Programming Language\vscode-extension"
+code --extensionDevelopmentPath "path\to\datascript\vscode-extension"
 ```
 
 Open a `.ds` file, trigger the formatter, and live edits will rebuild thanks to the watch task.
