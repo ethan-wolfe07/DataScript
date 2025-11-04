@@ -1,9 +1,9 @@
 {
-  "name": "datascript-language-support",
-  "displayName": "Datascript Language Support",
+  "name": "datascript-language",
+  "displayName": "DataScript",
   "description": "VS Code extension providing tooling for the Datascript language.",
-  "version": "0.0.1",
-  "publisher": "ethan-wolfe07",
+  "version": "0.0.4",
+  "publisher": "EthanWolfe",
   "license": "MIT",
   "repository": {
     "type": "git",
