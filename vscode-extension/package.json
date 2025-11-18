@@ -3,7 +3,7 @@
   "displayName": "DataScript",
   "description": "VS Code extension providing tooling for the Datascript language.",
   "icon": "images/icon.png",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publisher": "EthanWolfe",
   "license": "MIT",
   "repository": {
@@ -73,6 +73,7 @@
           "datascript.runtime.entryPoint": {
             "type": "string",
             "default": "",
+            "scope": "window",
             "description": "Path to the Datascript entry point (main.ts). Leave blank to use <workspace>/main.ts."
           },
           "datascript.runtime.denoPath": {

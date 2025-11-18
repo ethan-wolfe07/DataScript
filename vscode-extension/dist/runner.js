@@ -36,7 +36,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerRunner = registerRunner;
 const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
 const outputChannel = vscode.window.createOutputChannel("Datascript");
+const GLOBAL_ENTRYPOINT_KEY = "datascript.runtime.entryPoint";
 function normalize(p) {
     return path.normalize(p);
 }
@@ -47,7 +49,7 @@ function addCandidate(seen, list, candidate) {
         list.push(candidate);
     }
 }
-async function resolveEntryPoint(document, workspaceFolder, config) {
+async function resolveEntryPoint(document, workspaceFolder, config, globalEntryPoint, bundledEntryPoint) {
     outputChannel.appendLine("[resolveEntryPoint] starting lookup");
     const explicitRoots = vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath) ?? [];
     const workspaceRoot = workspaceFolder?.uri.fsPath ?? explicitRoots[0];
@@ -61,6 +63,18 @@ async function resolveEntryPoint(document, workspaceFolder, config) {
                 ? path.join(workspaceRoot, configured)
                 : path.resolve(path.dirname(document.uri.fsPath), configured);
         addCandidate(seen, candidates, { path: absoluteCandidate, source: "configured" });
+    }
+    if (globalEntryPoint && globalEntryPoint.trim().length > 0) {
+        addCandidate(seen, candidates, {
+            path: path.normalize(globalEntryPoint.trim()),
+            source: "global",
+        });
+    }
+    if (bundledEntryPoint && bundledEntryPoint.trim().length > 0) {
+        addCandidate(seen, candidates, {
+            path: path.normalize(bundledEntryPoint.trim()),
+            source: "bundled",
+        });
     }
     if (workspaceRoot) {
         addCandidate(seen, candidates, {
@@ -101,8 +115,9 @@ async function resolveEntryPoint(document, workspaceFolder, config) {
         .join("; ")}`);
     return undefined;
 }
-async function persistEntryPoint(config, workspaceFolder, entryPoint, alreadyConfigured) {
-    if (alreadyConfigured) {
+async function persistEntryPoint(config, workspaceFolder, entryPoint, alreadyConfigured, storage, persistConfig) {
+    await storage.update(GLOBAL_ENTRYPOINT_KEY, entryPoint);
+    if (alreadyConfigured || !persistConfig) {
         return;
     }
     const target = workspaceFolder
@@ -111,6 +126,20 @@ async function persistEntryPoint(config, workspaceFolder, entryPoint, alreadyCon
     const root = workspaceFolder?.uri.fsPath;
     const valueToStore = root ? path.relative(root, entryPoint) : entryPoint;
     await config.update("runtime.entryPoint", valueToStore, target);
+}
+function getBundledEntryPoint(context) {
+    const candidates = [
+        path.join(context.extensionPath, "main.ts"),
+        path.join(context.extensionPath, "dist", "main.ts"),
+        path.join(context.extensionPath, "..", "main.ts"),
+    ];
+    for (const candidate of candidates) {
+        const normalized = path.normalize(candidate);
+        if (fs.existsSync(normalized)) {
+            return normalized;
+        }
+    }
+    return undefined;
 }
 function buildCommand(document, config, entryPoint) {
     const denoPath = (config.get("runtime.denoPath") ?? "deno").trim() || "deno";
@@ -152,7 +181,9 @@ function registerRunner(context) {
         const document = editor.document;
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
         const config = vscode.workspace.getConfiguration("datascript", document.uri);
-        const resolved = await resolveEntryPoint(document, workspaceFolder, config);
+        const globalEntryPoint = context.globalState.get(GLOBAL_ENTRYPOINT_KEY);
+        const bundledEntryPoint = getBundledEntryPoint(context);
+        const resolved = await resolveEntryPoint(document, workspaceFolder, config, globalEntryPoint, bundledEntryPoint);
         let entryPoint = resolved?.path;
         if (!entryPoint) {
             entryPoint = await promptForEntryPoint(workspaceFolder, config);
@@ -162,14 +193,13 @@ function registerRunner(context) {
             outputChannel.show(true);
             return;
         }
-        await persistEntryPoint(config, workspaceFolder, entryPoint, resolved?.source === "configured");
+        await persistEntryPoint(config, workspaceFolder, entryPoint, resolved?.source === "configured", context.globalState, resolved?.source !== "bundled" && resolved?.source !== "global");
         const { command, args } = buildCommand(document, config, entryPoint);
         const terminalName = "Datascript";
         const existing = vscode.window.terminals.find((term) => term.name === terminalName);
         const terminal = existing ?? vscode.window.createTerminal(terminalName);
         terminal.show(true);
-        const workspaceRoot = workspaceFolder?.uri.fsPath;
-        const cwd = workspaceRoot ?? path.dirname(document.uri.fsPath);
+        const cwd = path.dirname(entryPoint);
         const cdCommand = `cd ${quote(cwd)}`;
         terminal.sendText(cdCommand, true);
         const runCommandText = `${quote(command)} ${args.map(quote).join(" ")}`;

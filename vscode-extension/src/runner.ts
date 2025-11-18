@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import * as fs from "fs";
 
 const outputChannel = vscode.window.createOutputChannel("Datascript");
+const GLOBAL_ENTRYPOINT_KEY = "datascript.runtime.entryPoint";
 
-type EntryPointSource = "configured" | "auto";
+type EntryPointSource = "configured" | "auto" | "global" | "bundled";
 
 type EntryPointCandidate = {
   path: string;
@@ -30,6 +32,8 @@ async function resolveEntryPoint(
   document: vscode.TextDocument,
   workspaceFolder: vscode.WorkspaceFolder | undefined,
   config: vscode.WorkspaceConfiguration,
+  globalEntryPoint: string | undefined,
+  bundledEntryPoint: string | undefined,
 ): Promise<EntryPointCandidate | undefined> {
   outputChannel.appendLine("[resolveEntryPoint] starting lookup");
 
@@ -46,6 +50,20 @@ async function resolveEntryPoint(
       ? path.join(workspaceRoot, configured)
       : path.resolve(path.dirname(document.uri.fsPath), configured);
     addCandidate(seen, candidates, { path: absoluteCandidate, source: "configured" });
+  }
+
+  if (globalEntryPoint && globalEntryPoint.trim().length > 0) {
+    addCandidate(seen, candidates, {
+      path: path.normalize(globalEntryPoint.trim()),
+      source: "global",
+    });
+  }
+
+  if (bundledEntryPoint && bundledEntryPoint.trim().length > 0) {
+    addCandidate(seen, candidates, {
+      path: path.normalize(bundledEntryPoint.trim()),
+      source: "bundled",
+    });
   }
 
   if (workspaceRoot) {
@@ -100,8 +118,12 @@ async function persistEntryPoint(
   workspaceFolder: vscode.WorkspaceFolder | undefined,
   entryPoint: string,
   alreadyConfigured: boolean,
+  storage: vscode.Memento,
+  persistConfig: boolean,
 ) {
-  if (alreadyConfigured) {
+  await storage.update(GLOBAL_ENTRYPOINT_KEY, entryPoint);
+
+  if (alreadyConfigured || !persistConfig) {
     return;
   }
 
@@ -112,6 +134,23 @@ async function persistEntryPoint(
   const valueToStore = root ? path.relative(root, entryPoint) : entryPoint;
 
   await config.update("runtime.entryPoint", valueToStore, target);
+}
+
+function getBundledEntryPoint(context: vscode.ExtensionContext): string | undefined {
+  const candidates = [
+    path.join(context.extensionPath, "main.ts"),
+    path.join(context.extensionPath, "dist", "main.ts"),
+    path.join(context.extensionPath, "..", "main.ts"),
+  ];
+
+  for (const candidate of candidates) {
+    const normalized = path.normalize(candidate);
+    if (fs.existsSync(normalized)) {
+      return normalized;
+    }
+  }
+
+  return undefined;
 }
 
 function buildCommand(
@@ -172,7 +211,15 @@ export function registerRunner(context: vscode.ExtensionContext) {
     const document = editor.document;
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
     const config = vscode.workspace.getConfiguration("datascript", document.uri);
-    const resolved = await resolveEntryPoint(document, workspaceFolder, config);
+    const globalEntryPoint = context.globalState.get<string>(GLOBAL_ENTRYPOINT_KEY);
+    const bundledEntryPoint = getBundledEntryPoint(context);
+    const resolved = await resolveEntryPoint(
+      document,
+      workspaceFolder,
+      config,
+      globalEntryPoint,
+      bundledEntryPoint,
+    );
 
     let entryPoint = resolved?.path;
 
@@ -188,7 +235,14 @@ export function registerRunner(context: vscode.ExtensionContext) {
       return;
     }
 
-    await persistEntryPoint(config, workspaceFolder, entryPoint, resolved?.source === "configured");
+    await persistEntryPoint(
+      config,
+      workspaceFolder,
+      entryPoint,
+      resolved?.source === "configured",
+      context.globalState,
+      resolved?.source !== "bundled" && resolved?.source !== "global",
+    );
 
     const { command, args } = buildCommand(document, config, entryPoint);
 
@@ -197,8 +251,7 @@ export function registerRunner(context: vscode.ExtensionContext) {
     const terminal = existing ?? vscode.window.createTerminal(terminalName);
     terminal.show(true);
 
-    const workspaceRoot = workspaceFolder?.uri.fsPath;
-    const cwd = workspaceRoot ?? path.dirname(document.uri.fsPath);
+  const cwd = path.dirname(entryPoint);
     const cdCommand = `cd ${quote(cwd)}`;
     terminal.sendText(cdCommand, true);
 
