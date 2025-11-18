@@ -6,6 +6,7 @@ A Visual Studio Code extension that brings syntax highlighting, basic formatting
 
 - TextMate grammar for Datascript keywords, Mongo DSL operators, comments, strings, numbers, and built-ins.
 - Document formatter that normalizes indentation and block structure (`Ctrl+Alt+F` or `Datascript: Format Document`).
+- Run the currently active Datascript file via Deno (`Ctrl+Alt+X` on Windows/Linux or `Cmd+Alt+X` on macOS, or use `Datascript: Run Active File`).
 - Inline configuration setting (`datascript.format.indentSize`) to align formatter indentation with project style.
 
 More language services (diagnostics, hover docs, completions) are planned.
@@ -35,6 +36,11 @@ To publish, ensure you have a Personal Access Token (`VSCE_PAT`) for the Marketp
 ```powershell
 npx @vscode/vsce publish
 ```
+
+### Runtime Settings
+
+- `datascript.runtime.entryPoint` – relative or absolute path to `main.ts` (defaults to `<workspace>/main.ts`). The extension will also search parent folders automatically; if nothing is found you can pick the interpreter once and it will be remembered.
+- `datascript.runtime.denoPath` – command used to invoke Deno (defaults to `deno`).
 
 ## Testing
 

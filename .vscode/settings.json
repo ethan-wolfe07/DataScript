@@ -2,5 +2,6 @@
   "deno.enable": true,
   "deno.disablePaths": [
     "./vscode-extension"
-  ]
+  ],
+  "datascript.runtime.entryPoint": "main.ts"
 }

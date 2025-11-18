@@ -1,8 +1,10 @@
-import * as vscode from "vscode";
+import type { ExtensionContext } from "vscode";
 import { registerFormatter } from "./formatter";
+import { registerRunner } from "./runner";
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
   registerFormatter(context);
+  registerRunner(context);
 }
 
 export function deactivate() {
