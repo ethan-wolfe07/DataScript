@@ -137,19 +137,18 @@ async function persistEntryPoint(
 }
 
 function getBundledEntryPoint(context: vscode.ExtensionContext): string | undefined {
-  const candidates = [
-    path.join(context.extensionPath, "main.ts"),
-    path.join(context.extensionPath, "dist", "main.ts"),
-    path.join(context.extensionPath, "..", "main.ts"),
-  ];
+  // Path to 'main.ts' in the root of your extension's installation folder
+  const bundledPath = path.join(context.extensionPath, "main.ts");
+  const normalized = path.normalize(bundledPath);
 
-  for (const candidate of candidates) {
-    const normalized = path.normalize(candidate);
-    if (fs.existsSync(normalized)) {
-      return normalized;
-    }
+  if (fs.existsSync(normalized)) {
+    return normalized;
   }
 
+  // This will help debug if it's still not found
+  outputChannel.appendLine(
+    `[getBundledEntryPoint] Bundled entry point not found at ${normalized}`
+  );
   return undefined;
 }
 

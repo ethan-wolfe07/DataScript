@@ -20,6 +20,12 @@
     "Programming Languages"
   ],
   "main": "./dist/extension.js",
+  "files": [
+    "dist",
+    "main.ts",
+    "frontend",
+    "runtime"
+  ],
   "contributes": {
     "languages": [
       {
