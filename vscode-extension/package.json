@@ -3,7 +3,7 @@
   "displayName": "DataScript",
   "description": "VS Code extension providing tooling for the Datascript language.",
   "icon": "images/icon.png",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "publisher": "EthanWolfe",
   "license": "MIT",
   "repository": {
@@ -30,8 +30,13 @@
     "languages": [
       {
         "id": "datascript",
-        "aliases": ["Datascript", "datascript"],
-        "extensions": [".ds"],
+        "aliases": [
+          "Datascript",
+          "datascript"
+        ],
+        "extensions": [
+          ".ds"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -97,7 +102,7 @@
     "clean": "rimraf dist",
     "vscode:prepublish": "npm run build",
     "lint": "npm run build",
-  "package": "npm run build && npx @vscode/vsce package",
+    "package": "npm run build && npx @vscode/vsce package",
     "test": "echo 'Test suite not implemented yet'"
   },
   "devDependencies": {
