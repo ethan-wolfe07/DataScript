@@ -128,13 +128,12 @@ async function persistEntryPoint(config, workspaceFolder, entryPoint, alreadyCon
     await config.update("runtime.entryPoint", valueToStore, target);
 }
 function getBundledEntryPoint(context) {
-    // Path to 'main.ts' in the root of your extension's installation folder
-    const bundledPath = path.join(context.extensionPath, "main.ts");
+    // Path to 'main.ts' INSIDE the 'dist' folder
+    const bundledPath = path.join(context.extensionPath, "dist", "main.ts");
     const normalized = path.normalize(bundledPath);
     if (fs.existsSync(normalized)) {
         return normalized;
     }
-    // This will help debug if it's still not found
     outputChannel.appendLine(`[getBundledEntryPoint] Bundled entry point not found at ${normalized}`);
     return undefined;
 }
