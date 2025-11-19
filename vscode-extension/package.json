@@ -25,7 +25,8 @@
     "main.ts",
     "frontend",
     "runtime",
-    "LICENSE"
+    "LICENSE",
+    "images"
   ],
   "contributes": {
     "languages": [
