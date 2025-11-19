@@ -24,7 +24,8 @@
     "dist",
     "main.ts",
     "frontend",
-    "runtime"
+    "runtime",
+    "LICENSE"
   ],
   "contributes": {
     "languages": [
