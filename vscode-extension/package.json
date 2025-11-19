@@ -22,11 +22,10 @@
   "main": "./dist/extension.js",
   "files": [
     "dist",
-    "main.ts",
-    "frontend",
-    "runtime",
-    "LICENSE",
-    "images"
+    "language-configuration.json",
+    "syntaxes",
+    "images",
+    "LICENSE"
   ],
   "contributes": {
     "languages": [
@@ -99,7 +98,8 @@
     ]
   },
   "scripts": {
-    "build": "tsc -p ./",
+    "build": "npm run clean && tsc -p ./ && npm run copy-interpreter",
+    "copy-interpreter": "cpr main.ts dist/main.ts -o && cpr frontend dist/frontend -o && cpr runtime dist/runtime -o",
     "watch": "tsc -w -p ./",
     "clean": "rimraf dist",
     "vscode:prepublish": "npm run build",
@@ -110,10 +110,11 @@
   "devDependencies": {
     "@types/node": "^18.17.0",
     "@types/vscode": "^1.75.0",
+    "@vscode/test-electron": "^2.3.3",
+    "@vscode/vsce": "^3.6.2",
+    "cpr": "^3.0.1",
     "rimraf": "^5.0.5",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3",
-    "@vscode/vsce": "^3.6.2",
-    "@vscode/test-electron": "^2.3.3"
+    "typescript": "^5.3.3"
   }
 }
