@@ -3,7 +3,7 @@
   "displayName": "DataScript",
   "description": "VS Code extension providing tooling for the Datascript language.",
   "icon": "images/icon.png",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "publisher": "EthanWolfe",
   "license": "MIT",
   "repository": {
